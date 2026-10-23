@@ -1,0 +1,34 @@
+{
+  "meta": {
+    "title": "子智能体侧边栏",
+    "description": "在右侧边栏列出子智能体，并打开它们的会话。"
+  },
+  "strings": {
+    "tab.title": "子智能体",
+    "guide.title": "子智能体",
+    "guide.description": "列出本会话的子智能体",
+    "aria.list": "此会话的子智能体",
+    "loading": "正在加载子智能体…",
+    "migrationRequired": "此会话的历史记录需要迁移后才能读取子智能体。",
+    "loadError": "无法读取此会话的子智能体。",
+    "empty.title": "暂无子智能体",
+    "empty.description": "从此会话派生的子智能体将显示在这里。",
+    "state.running": "正在运行",
+    "state.idle": "空闲",
+    "state.completed": "已完成",
+    "state.failed": "失败",
+    "mode.external": "外部",
+    "tokens.total": "{value} tok",
+    "turns.other": "{count} 轮",
+    "duration.subSecond": "不到 1 秒",
+    "duration.seconds": "{seconds} 秒",
+    "duration.minutes": "{minutes} 分 {seconds} 秒",
+    "duration.hours": "{hours} 小时 {minutes} 分",
+    "duration.days": "{days} 天 {hours} 小时",
+    "loadMore": "加载更多",
+    "age.now": "刚刚",
+    "age.minute": "{count} 分钟前",
+    "age.hour": "{count} 小时前",
+    "age.day": "{count} 天前"
+  }
+}
