@@ -68,7 +68,7 @@
     "@deepseek-ai/dsh-subagent": "^0.2.1-rc.2",
     "@types/node": "^26.6.5",
     "@types/react": "^18.3.31",
-    "dprint": "0.62.0",
+    "dprint": "0.63.0",
     "esbuild": "^0.28.2",
     "oxlint": "1.88.0",
     "typescript": "^7.0.2"
