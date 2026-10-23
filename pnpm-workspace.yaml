@@ -15,3 +15,6 @@ allowBuilds:
 minimumReleaseAgeExclude:
   - "@exagone313/*"
   - "@deepseek-ai/*"
+
+overrides:
+  zod: ^4.6.6
