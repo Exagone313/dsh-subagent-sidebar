@@ -7,6 +7,7 @@ import assert from "node:assert/strict";
 import {
   estimateSubagentPageSize,
   formatTokenCount,
+  hasRunningSubagent,
   isAddressable,
   nextSubagentPageCount,
   relativeAge,
@@ -123,6 +124,38 @@ test("a running child reads running even after a failed turn", () => {
     "running",
   );
   assert.equal(subagentState({ running: true }), "running");
+});
+
+test("the tab indicator follows any running child", () => {
+  const entries: SubagentCatalogEntryLike<"child-a" | "child-b">[] = [
+    { id: "child-a", createdAt: 1, mode: "continuable" },
+    { id: "child-b", createdAt: 2, mode: "continuable" },
+  ];
+  const stopped = new Map<"child-a" | "child-b", { running?: boolean }>([
+    ["child-a", { running: false }],
+  ]);
+  const running = new Map<"child-a" | "child-b", { running?: boolean }>([
+    ["child-a", { running: true }],
+  ]);
+
+  assert.equal(hasRunningSubagent(entries, stopped, {}), false);
+  // The live status map wins over a missing summary.
+  assert.equal(hasRunningSubagent(entries, running, {}), true);
+  // Until a status frame arrives, the summary's running flag is the fallback.
+  assert.equal(
+    hasRunningSubagent(entries, stopped, { "child-b": { running: true } }),
+    true,
+  );
+  assert.equal(hasRunningSubagent([], new Map(), {}), false);
+  // External rows own no local Session, so neither fact exists for them.
+  assert.equal(
+    hasRunningSubagent(
+      [entry("child-a", 1, "external")],
+      new Map<"child-a", { running?: boolean }>(),
+      {},
+    ),
+    false,
+  );
 });
 
 test("a stopped child reads completed, failed or idle from its last turn", () => {

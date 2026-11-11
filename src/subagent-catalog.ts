@@ -186,6 +186,27 @@ export function subagentCatalogView<Id extends string>(
 }
 
 /**
+ * Whether any catalog row is currently running.
+ *
+ * The live status map wins; a summary's running flag is the fallback until a
+ * status frame arrives for that child. External executions have neither fact
+ * and never count.
+ * @param entries - catalog rows to inspect.
+ * @param statuses - live status by child Session identity.
+ * @param summaries - Session summaries carrying the running fallback.
+ * @returns true when at least one row is running.
+ */
+export function hasRunningSubagent<Id extends string>(
+  entries: readonly SubagentCatalogEntryLike<Id>[],
+  statuses: ReadonlyMap<Id, SubagentStatusFacts>,
+  summaries: Readonly<Partial<Record<Id, SubagentSummaryLike>>>,
+): boolean {
+  return entries.some((entry) =>
+    (statuses.get(entry.id)?.running ?? summaries[entry.id]?.running) === true
+  );
+}
+
+/**
  * Order rows newest first, so a newly spawned subagent is at the top.
  *
  * The identity tiebreak keeps the order stable for rows created in the same

@@ -31,6 +31,7 @@ import type { SessionId } from "@deepseek-ai/dsh-session/types";
 import {
   type AddressableMode,
   estimateSubagentPageSize,
+  hasRunningSubagent,
   isAddressable,
   nextSubagentPageCount,
   sortSubagentEntries,
@@ -277,9 +278,7 @@ export function SubagentsTab(props: SubagentsTabProps): ReactNode {
   // Only the cards on screen matter: a running child behind "Load more" must
   // not keep the ticker alive. The status map is live, with the summary's
   // running flag as the fallback until a status frame arrives.
-  const shownRunning = page.entries.some((item) =>
-    (statuses.get(item.id)?.running ?? summaries[item.id]?.running) === true
-  );
+  const shownRunning = hasRunningSubagent(page.entries, statuses, summaries);
   const now = useNow(visible, shownRunning);
 
   if (view.kind === "loading") {

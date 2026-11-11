@@ -225,6 +225,20 @@ export const SUBAGENT_SIDEBAR_STYLES = `
   background: var(--dsw-alias-state-idle-primary);
 }
 
+/* The tab chip's aggregate running indicator: a smaller echo of the card
+   state dot, shown before the label while at least one child is running. */
+.dssb-tab-dot {
+  display: inline-block;
+  flex: none;
+  width: 7px;
+  height: 7px;
+  vertical-align: middle;
+  border-radius: 50%;
+  background: var(--dsw-alias-state-business-primary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--dsw-alias-state-business-primary) 18%, transparent);
+  animation: dssb-pulse 1.8s ease-in-out infinite;
+}
+
 @keyframes dssb-pulse {
   0%,
   100% {
@@ -237,7 +251,8 @@ export const SUBAGENT_SIDEBAR_STYLES = `
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .dssb-dot[data-state="running"] {
+  .dssb-dot[data-state="running"],
+  .dssb-tab-dot {
     animation: none;
   }
 }
