@@ -17,7 +17,10 @@ import type { SessionId } from "@deepseek-ai/dsh-session/types";
 import { en, NS, zh } from "../locales.js";
 import { subagentAddress } from "../subagent-catalog.js";
 import { SubagentsTab, type SubagentsTabInjected } from "./SubagentsTab.js";
-import { SubagentsTabTitle } from "./SubagentsTabTitle.js";
+import {
+  SubagentsTabTitle,
+  type SubagentsTabTitleInjected,
+} from "./SubagentsTabTitle.js";
 import { SUBAGENTS_TAB_ID, subagentsTabDefinition } from "./subagents-tab.js";
 import { installSubagentSidebarStyles } from "./styles.js";
 
@@ -84,6 +87,11 @@ export function apply(ctx: ClientContext): void {
           name: "sidebar.right.pane.tab.title",
           key: SUBAGENTS_TAB_ID,
           locale: NS,
+          inject: (sessionId: SessionId): SubagentsTabTitleInjected => ({
+            refreshProjections: () => {
+              void sessions.refreshProjections(sessionId);
+            },
+          }),
         },
         SubagentsTabTitle,
       ),

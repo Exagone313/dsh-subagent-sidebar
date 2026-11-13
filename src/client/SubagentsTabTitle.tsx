@@ -7,6 +7,7 @@
 // registered; registering here is what lets the chip show a live aggregate of
 // the Session's subagent state.
 import type {
+  InjectFace,
   PropsLocale,
   PropsRuntime,
 } from "@deepseek-ai/dsh-client-ui-slots";
@@ -20,17 +21,24 @@ import type {} from "@deepseek-ai/dsh-client-ui-sidebar-right/client";
 // Type-only: loads the `subagentCatalog` projection vocabulary.
 import type {} from "@deepseek-ai/dsh-subagent/client";
 import type { SessionId } from "@deepseek-ai/dsh-session/types";
-import type { ReactNode } from "react";
+import { type ReactNode, useEffect, useRef } from "react";
 import { NS } from "../locales.js";
 import {
   hasRunningSubagent,
   subagentCatalogView,
 } from "../subagent-catalog.js";
 
+/** Business face the title registrant adds to the chip title props. */
+export interface SubagentsTabTitleInjected {
+  /** Ask the Session Controller for a fresh projection cut of this Session. */
+  readonly refreshProjections: () => void;
+}
+
 /** Everything the chip title receives: framework shares plus the plugin copy. */
 export type SubagentsTabTitleProps =
   & PropsRuntime<"sidebar.right.pane.tab.title">
-  & PropsLocale<typeof NS>;
+  & PropsLocale<typeof NS>
+  & InjectFace<SubagentsTabTitleInjected>;
 
 /**
  * Selector hook over one snapshot source, the shape the standard Session kit
@@ -50,7 +58,7 @@ type SnapshotSelectorHook<Snapshot> = <Selected>(
  * @returns the running indicator followed by the tab's label.
  */
 export function SubagentsTabTitle(props: SubagentsTabTitleProps): ReactNode {
-  const { t, sessionId } = props;
+  const { t, sessionId, refreshProjections } = props;
   const useSessions: SnapshotSelectorHook<SessionListState> = props.useSessions;
   const useSessionStatus: SnapshotSelectorHook<
     ReadonlyMap<SessionId, SessionStatus>
@@ -63,6 +71,21 @@ export function SubagentsTabTitle(props: SubagentsTabTitleProps): ReactNode {
   const view = subagentCatalogView<SessionId>(snapshot);
   const running = view.kind === "ready" &&
     hasRunningSubagent(view.entries, statuses, summaries);
+
+  // The chip is rendered for inactive tabs too, but the body only asks for a
+  // fresh cut when it becomes visible. Ask from the title whenever the catalog
+  // has no cut yet, so the dot can light without selecting the tab. One request
+  // per title is enough until the snapshot leaves the loading state.
+  const requested = useRef<SessionId | undefined>(undefined);
+  useEffect(() => {
+    if (view.kind !== "loading") {
+      requested.current = undefined;
+      return;
+    }
+    if (requested.current === sessionId) return;
+    requested.current = sessionId;
+    refreshProjections();
+  }, [refreshProjections, sessionId, view.kind]);
 
   return (
     <>
